@@ -89,6 +89,12 @@ $ed=$logger->getMillisecond();
     padding:5px;
     background-color:#61ac7d;
     color:#ffffff;
+    text-decoration:none;
+    transition:all .3s;
+}
+.button:hover{
+    background-color:#3d6b4e;
+    color:#b9b9b9;
 }
 .downbarbox{
     margin-top:20px;
