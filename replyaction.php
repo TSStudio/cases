@@ -2,7 +2,7 @@
 include "contestinfo.php";
 if($_POST["adminpassword"]!=$adminpassword){die();}
 $con=new \mysqli($dbhost,$dbuser,$dbpawd,$dbname);
-$text=mysqli_real_escape_string($con,htmlspecialchars($_POST["content"]));
+$text=mysqli_real_escape_string($con,htmlspecialchars(mb_convert_encoding($_POST["content"],"UTF-8","HTML-ENTITIES")));
 $serialno=$_POST["serialno"];
 $time=time();
 $con->query("INSERT INTO `casesReply` (caseid,time,text) values(\"{$serialno}\",{$time},\"{$text}\");");

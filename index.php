@@ -39,7 +39,7 @@ if($result->num_rows>0){
     $createtime=$row["createtime"];
     $email=$row["email"];
     $logger->next("Found case. Create time ".$createtime." Email ".$email);
-    $manifest="邮箱: ".$email."<br>创建时间:".date("Y-m-d H:i:s",$createtime)."<br>";
+    $manifest="<img src=\"https://gravatar.loli.net/avatar/".md5(strtolower(trim($email)))."?d=mp\" alt=\"image of user\" /><a href=\"http://cn.gravatar.org/\" class=\"button\">(?)</a><br>邮箱: ".$email."<br>创建时间:".date("Y-m-d H:i:s",$createtime)."<br>";
 }else{
     $logger->next("Case not found.");
     $manifest="未找到工单";
