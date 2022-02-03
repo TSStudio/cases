@@ -1,4 +1,11 @@
 <?php
+session_start();
+if(!isset($_SESSION["language"])){
+    $_SESSION["language"]="zh-cn";
+}
+include "languagefile.php";
+include "languageprocessor.php";
+$lpcs=new TSSLanguages();
 class TSSlog3j1{
     public $logstr="";
     public function getMillisecond(){
@@ -15,8 +22,8 @@ $st=$logger->getMillisecond();
 $logger->next("LOGGING START");
 if(!isset($_GET["no"])){
     $logger->next("GET param \"no\" is not defined. Exit 1");
-    $serialno="未定义";
-    $manifest="未明确工单";
+    $serialno=$langUndefined;
+    $manifest=$langUnclearCase;
     goto end;
 }
 include "contestinfo.php";
@@ -39,10 +46,10 @@ if($result->num_rows>0){
     $createtime=$row["createtime"];
     $email=$row["email"];
     $logger->next("Found case. Create time ".$createtime." Email ".$email);
-    $manifest="<img src=\"https://gravatar.loli.net/avatar/".md5(strtolower(trim($email)))."?d=mp\" alt=\"image of user\" /><a href=\"http://cn.gravatar.org/\" class=\"button\">(?)</a><br>邮箱: ".$email."<br>创建时间:".date("Y-m-d H:i:s",$createtime)."<br>";
+    $manifest="<img src=\"https://gravatar.loli.net/avatar/".md5(strtolower(trim($email)))."?d=mp\" alt=\"image of user\" /><a href=\"http://cn.gravatar.org/\" class=\"button\">(?)</a><br>".$langEmail.": ".$email."<br>".$langCreateTime.":".date("Y-m-d H:i:s",$createtime)."<br>";
 }else{
     $logger->next("Case not found.");
-    $manifest="未找到工单";
+    $manifest=$langUnclearCase;
     goto end;
 }
 $logger->next("Looking for replies");
@@ -53,13 +60,13 @@ $logger->next("Query took ".round($s2-$s1,3)." ms");
 $i=0;
 if($result->num_rows>0){
     while($row=$result->fetch_array()){
-        $output=$output."<div class=\"message\">在 ".date("Y-m-d H:i:s",$row["time"]).":<br>".$row["text"]."</div>";
+        $output=$output."<div class=\"message\">".$lpcs->replaceArgs($langReplyat,date("Y-m-d H:i:s",$row["time"]))."<br>".$row["text"]."</div>";
         $logger->next("Reply #".$i." Time:".$row["time"]);
         $i++;
     }
 }else{
     $logger->next("No reply found.");
-    $output="暂时没有回复";
+    $output=$langNoReply;
     goto end;
 }
 end:
@@ -99,29 +106,39 @@ $ed=$logger->getMillisecond();
 .downbarbox{
     margin-top:20px;
 }
+.languageZone{
+    margin-top:20px;
+    margin-bottom:20px;
+    background-color:#CCCCCC;
+    padding:10px;
+}
 </style>
-        <title>工单查询</title>
+        <title><?=$langCaseQuery?></title>
     </head>
     <body>
         <div class="title">
-            工单 #<?=$serialno?>
+            <?=$langCase?> #<?=$serialno?>
         </div>
         <div class="infobox">
         <?=$manifest?>
         </div>
-        工单回复记录
+        <div class="languageZone">
+            <a class="button" href="languageset.php"><?=$langLanguageSet?>|Language Settings</a><br>
+            <?=$langDescribe?>
+        </div>
+        <?=$langCaseReplies?>
         <div>
             <?=$output?>
         </div>
-        网站加载日志
+        <?=$langLog?>
         <div class="logbox">
             <?=$logger->logstr?>
         </div>
         <div>
-            页面在 <?=round($ed-$st,3)?> 毫秒内处理完毕
+            <?=$lpcs->replaceArgs($langProcessIn,round($ed-$st,3))?>
         </div>
         <div class="downbarbox">
-            <a class="button" href="about.html">关于本网站</a>
+            <a class="button" href="about.php"><?=$langAbout?></a>
         </div>
     </body>
 </html>
